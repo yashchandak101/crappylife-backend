@@ -58,10 +58,13 @@ INSTALLED_APPS = [
 ]
 
 # CORS
+# settings.py
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://crappylife-frontend-pbq2.vercel.app/",
+    "https://crappylife-frontend-pbq2.vercel.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://crappylife-frontend-pbq2.vercel.app",
 ]
 
 
