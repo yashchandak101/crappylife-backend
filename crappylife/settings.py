@@ -59,10 +59,11 @@ INSTALLED_APPS = [
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",        # local dev
-    "http://127.0.0.1:3000",        # local dev
-    "https://crappylife-frontend-6wov69qhq-yashchandak101s-projects.vercel.app/",  # your Render frontend URL
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://crappylife-frontend-6wov69qhq-yashchandak101s-projects.vercel.app",
 ]
+
 
 # Media & Static
 MEDIA_URL = "/media/"
