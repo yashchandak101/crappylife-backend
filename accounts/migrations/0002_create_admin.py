@@ -1,13 +1,25 @@
-# accounts/migrations/0002_create_admin.py
 from django.db import migrations
 
-def create_admin(apps, schema_editor):
+def create_superuser(apps, schema_editor):
     User = apps.get_model("accounts", "User")
-    User.objects.create_superuser(
-        username="yashsuper",
-        email="channdak.yash101@gmail.com",
-        password="Yash@123"
-    )
+    Permission = apps.get_model("auth", "Permission")
+
+    # Create only if not exists
+    if not User.objects.filter(username="admin").exists():
+        user = User.objects.create_superuser(
+            username="yashchandak",
+            email="yashchandakk.01@gmail.com",
+            password="yashchandak123"
+        )
+        # Explicitly make sure
+        user.is_staff = True
+        user.is_superuser = True
+        user.save()
+
+        # Assign all permissions
+        all_permissions = Permission.objects.all()
+        user.user_permissions.set(all_permissions)
+        user.save()
 
 class Migration(migrations.Migration):
 
@@ -16,5 +28,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_admin),
+        migrations.RunPython(create_superuser),
     ]
