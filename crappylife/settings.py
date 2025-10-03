@@ -11,6 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "unsafe-dev-key")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 #ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
+
 ALLOWED_HOSTS = ["*"]
 
 # Database (Render provides DATABASE_URL)
@@ -58,9 +59,9 @@ INSTALLED_APPS = [
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    os.environ.get("FRONTEND_URL", ""),  # e.g. https://your-frontend.onrender.com
+    "http://localhost:3000",        # local dev
+    "http://127.0.0.1:3000",        # local dev
+    "https://crappylife-frontend-6wov69qhq-yashchandak101s-projects.vercel.app/",  # your Render frontend URL
 ]
 
 # Media & Static
