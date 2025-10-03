@@ -15,10 +15,11 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
 
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgres://myuser:i4yVrjIt2KEuAVjK7FJ94dzud57nxdSQ@dpg-d3g08eripnbc73bj7c80-a:5432/mydb_1jmx",
+        default="postgres://myuser:mypassword@localhost:5432/mydb",
         conn_max_age=600,  # keeps DB connections alive
     )
 }
+
 
 AUTH_USER_MODEL = "accounts.User"
 
