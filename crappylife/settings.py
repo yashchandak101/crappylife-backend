@@ -1,13 +1,24 @@
 import os
 from pathlib import Path
-from datetime import timedelta
+from dotenv import load_dotenv
+import dj_database_url
+
+# Load .env for local dev
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "unsafe-secret-key")
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "unsafe-dev-key")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", os.environ.get("RENDER_EXTERNAL_HOSTNAME", "")]
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
+
+# Database (Render injects DATABASE_URL automatically)
+DATABASES = {
+    "default": dj_database_url.config(
+        default="postgres://myuser:mypassword@localhost:5432/mydb",
+        conn_max_age=600,  # keeps DB connections alive
+    )
+}
 
 AUTH_USER_MODEL = "accounts.User"
 
