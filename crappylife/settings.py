@@ -13,7 +13,6 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
 
 
-# Database (Render injects DATABASE_URL automatically)
 DATABASES = {
     "default": dj_database_url.config(
         default="postgres://myuser:mypassword@localhost:5432/mydb",
