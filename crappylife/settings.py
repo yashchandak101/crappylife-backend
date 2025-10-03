@@ -12,13 +12,21 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "unsafe-dev-key")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
 
-
+# Database (Render provides DATABASE_URL)
+import dj_database_url
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgres://myuser:mypassword@localhost:5432/mydb",
-        conn_max_age=600,  # keeps DB connections alive
+        default=os.environ.get("DATABASE_URL"), 
+        conn_max_age=600, 
+        ssl_require=True
     )
 }
+#DATABASES = {
+#    "default": dj_database_url.config(
+#        default="postgres://myuser:mypassword@localhost:5432/mydb",
+#        conn_max_age=600,  # keeps DB connections alive
+ #   )
+#}
 
 
 AUTH_USER_MODEL = "accounts.User"
