@@ -61,7 +61,7 @@ INSTALLED_APPS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://crappylife-frontend-6wov69qhq-yashchandak101s-projects.vercel.app",
+    "https://crappylife-frontend-pbq2.vercel.app/",
 ]
 
 
