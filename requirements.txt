@@ -13,4 +13,5 @@ python-dotenv
 gunicorn
 whitenoise[brotli]
 dj-database-url
-cloudinary django-cloudinary-storage
+cloudinary 
+django-cloudinary-storage
