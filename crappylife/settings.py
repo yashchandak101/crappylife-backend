@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    
+    "cloudinary",
+    "cloudinary_storage",
     "corsheaders",
     'rest_framework',
     'rest_framework_simplejwt',
@@ -67,10 +69,16 @@ CSRF_TRUSTED_ORIGINS = [
     "https://crappylife-frontend-pbq2.vercel.app",
 ]
 
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": "YOUR_CLOUD_NAME",
+    "API_KEY": "YOUR_API_KEY",
+    "API_SECRET": "YOUR_API_SECRET",
+}
 
 # Media & Static
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
