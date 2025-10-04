@@ -62,11 +62,11 @@ INSTALLED_APPS = [
 # CORS
 # settings.py
 CORS_ALLOWED_ORIGINS = [
-    "https://crappylife-frontend-pbq2.vercel.app",
+    "https://crappylife-frontend.vercel.app/",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://crappylife-frontend-pbq2.vercel.app",
+    "https://crappylife-frontend.vercel.app/",
 ]
 
 CLOUDINARY_STORAGE = {
