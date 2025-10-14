@@ -19,9 +19,14 @@ def set_user_permissions(sender, instance, created, **kwargs):
             update_fields['is_staff'] = True
             update_fields['is_superuser'] = True
             group_name = "Admin"
-        elif instance.role in ["author", "editor"]:
+        elif instance.role == "editor":
             update_fields['is_staff'] = True
-            group_name = "Author" if instance.role == "author" else "Editor"
+            update_fields['is_superuser'] = False
+            group_name = "Editor"
+        elif instance.role == "author":
+            update_fields['is_staff'] = True
+            update_fields['is_superuser'] = False
+            group_name = "Author"
         else:
             group_name = None
         
