@@ -22,3 +22,9 @@ class ArticleAdmin(admin.ModelAdmin):
     filter_horizontal = ("tags",)
     date_hierarchy = "published_at"
     ordering = ("-published_at",)
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.groups.filter(name="Author").exists():
+            return qs.filter(author=request.user)
+        return qs
