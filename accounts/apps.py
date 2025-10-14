@@ -5,6 +5,4 @@ class AccountsConfig(AppConfig):
     name = "accounts"
 
     def ready(self):
-        # Don’t import signals directly here
-        # They will be imported later by post_migrate
-        pass
+        import accounts.signals  # ✅ safe import (happens after apps are loaded)
