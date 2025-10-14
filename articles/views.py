@@ -11,6 +11,25 @@ class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all().order_by("-published_at")
     serializer_class = ArticleSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    from django.contrib.auth.models import Permission
+    from django.contrib.contenttypes.models import ContentType
+    from accounts.roles import ROLE_AUTHORS
+    from articles.models import Article
+
+    def assign_author_permissions(user):
+        # Make staff
+        user.is_staff = True
+        user.save()
+
+        # Give view/add/change permissions for Article model
+        content_type = ContentType.objects.get_for_model(Article)
+        perms = Permission.objects.filter(content_type=content_type, codename__in=[
+            "add_article",
+            "change_article",
+            "view_article",
+        ])
+        user.user_permissions.set(perms)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
