@@ -5,7 +5,6 @@ class AccountsConfig(AppConfig):
     name = "accounts"
 
     def ready(self):
-        from django.db.models.signals import post_migrate
-        from accounts import signals  # Lazy import
-
-        post_migrate.connect(signals.create_default_roles, dispatch_uid="create_default_roles_safe")
+        # Don’t import signals directly here
+        # They will be imported later by post_migrate
+        pass
