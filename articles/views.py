@@ -37,6 +37,16 @@ class ArticleViewSet(viewsets.ModelViewSet):
         if slug:
             queryset = queryset.filter(slug=slug)
         return queryset
+    
+    @action(detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated])
+    def publish(self, request, pk=None):
+        article = self.get_object()
+        # allow only editors or admins
+        if not (is_editor(request.user) or is_admin(request.user)):
+            return Response({"detail": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
+        article.is_published = True
+        article.save()
+        return Response({"status": "published"})
 
     @action(detail=False, methods=["get"])
     def featured(self, request):

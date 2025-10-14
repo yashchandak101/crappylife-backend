@@ -21,7 +21,6 @@ from rest_framework.routers import DefaultRouter
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 router = DefaultRouter()
 # Example: router.register(r'items', ItemsViewSet)  # Register your viewsets here
 
@@ -35,5 +34,8 @@ urlpatterns = [
     path("api/newsletter/", include("newsletter.urls")),
     path("api/analytics/", include("analytics.urls")),
     path("api/notifications/", include("notifications.urls")),
-
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

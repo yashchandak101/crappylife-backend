@@ -24,6 +24,7 @@ class ArticleSerializer(serializers.ModelSerializer):
             "cover_image", "is_featured",
             "published_at", "updated_at"
         ]
+        read_only_fields = ("author", "published_at", "updated_at")
 
         def get_image(self, obj):
                 request = self.context.get("request")

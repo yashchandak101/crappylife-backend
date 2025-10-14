@@ -11,7 +11,3 @@ PyJWT==2.10.1
 sqlparse==0.5.3
 python-dotenv
 gunicorn
-whitenoise[brotli]
-dj-database-url
-cloudinary 
-django-cloudinary-storage

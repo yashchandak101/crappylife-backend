@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
-from cloudinary.models import CloudinaryField
 
 User = settings.AUTH_USER_MODEL
 
@@ -38,7 +37,7 @@ class Article(models.Model):
     category = models.ForeignKey(Category, related_name="articles", on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, blank=True)
     content = models.TextField()
-    cover_image = CloudinaryField("image", blank=True, null=True)
+    cover_image = models.ImageField(upload_to="articles/", blank=True, null=True)
     is_featured = models.BooleanField(default=False)
     published_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
