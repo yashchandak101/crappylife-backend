@@ -9,7 +9,7 @@ class User(AbstractUser):
     )
 
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="author")
-    bio = models.TextField(blank=True)
+    bio = models.TextField(blank=True, null=True)
     profile_image = models.ImageField(upload_to="users/", blank=True, null=True)
 
     def __str__(self):
