@@ -1,6 +1,7 @@
 from django.contrib import admin, messages
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 from .models import User
 
 # Optional: define roles here if you don’t have roles.py
@@ -47,12 +48,36 @@ class CustomUserAdmin(BaseUserAdmin):
     # ✅ Shared role assignment logic
     def assign_role(self, request, queryset, role_name):
         group, _ = Group.objects.get_or_create(name=role_name)
+
+        # ✅ Define permissions for each role
+        if role_name.lower() == "author":
+            # Authors can view and add/edit their own articles
+            perms = Permission.objects.filter(
+                codename__in=[
+                    "view_article", "add_article", "change_article"
+                ]
+            )
+        elif role_name.lower() == "editor":
+            # Editors can view, add, edit, and publish articles
+            perms = Permission.objects.filter(
+                codename__in=[
+                    "view_article", "add_article", "change_article", "delete_article"
+                ]
+            )
+        elif role_name.lower() == "admin":
+            # Admins get everything
+            perms = Permission.objects.all()
+        else:
+            perms = []
+
+        # ✅ Assign the permissions to the group
+        group.permissions.set(perms)
+
+        # ✅ Add users to the group
         for user in queryset:
-            user.role = role_name  # update User.role field
-            user.groups.clear()  # optional: clear existing groups
             user.groups.add(group)
-            user.save()
-        messages.success(request, f"Assigned '{role_name}' role to selected users.")
+
+        messages.success(request, f"Assigned {role_name} role to selected users.")
 
     actions = ["make_author", "make_editor", "make_admin"]
 
