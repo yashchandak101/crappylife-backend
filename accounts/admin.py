@@ -1,95 +1,91 @@
-# accounts/management/commands/setup_roles.py
+# accounts/management/commands/fix_my_admin.py
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
-from django.apps import apps
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
+User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = 'Setup user roles and permissions for the news website'
+    help = 'Fix admin access for your user - makes you a superuser'
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.WARNING('Setting up roles and permissions...\n'))
+        self.stdout.write('\n' + '='*70)
+        self.stdout.write(self.style.WARNING('FIXING ADMIN ACCESS'))
+        self.stdout.write('='*70 + '\n')
         
-        # Get all available models for permissions
-        all_models = apps.get_models()
+        # Show all users
+        self.stdout.write(self.style.SUCCESS('Available users:'))
+        users = User.objects.all()
         
-        # Define roles and their permissions
-        roles_config = {
-            'Author': {
-                'description': 'Can create and edit their own articles',
-                'permissions': [
-                    # Article permissions
-                    'view_article',
-                    'add_article',
-                    'change_article',
-                    # User permissions (view only)
-                    'view_user',
-                ]
-            },
-            'Editor': {
-                'description': 'Can manage all articles and content',
-                'permissions': [
-                    # Article permissions
-                    'view_article',
-                    'add_article',
-                    'change_article',
-                    'delete_article',
-                    # User permissions
-                    'view_user',
-                    # Add other content types as needed
-                ]
-            },
-            'Admin': {
-                'description': 'Full access to everything',
-                'permissions': 'all'
-            }
-        }
-
-        for role_name, config in roles_config.items():
-            group, created = Group.objects.get_or_create(name=role_name)
+        for i, user in enumerate(users, 1):
+            status = '✓ Superuser' if user.is_superuser else ('✓ Staff' if user.is_staff else '✗ No access')
+            self.stdout.write(f'{i}. {user.username:<20} | {status}')
+        
+        if not users:
+            self.stdout.write(self.style.ERROR('No users found! Create one with: python manage.py createsuperuser'))
+            return
+        
+        self.stdout.write('')
+        
+        # Get user choice
+        try:
+            choice = input('Enter the number of user to fix (or username): ').strip()
             
-            if config['permissions'] == 'all':
-                # Give all permissions to Admin
-                all_perms = Permission.objects.all()
-                group.permissions.set(all_perms)
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f'✓ {role_name}: {config["description"]}'
-                    )
-                )
-                self.stdout.write(f'  → ALL permissions ({all_perms.count()} total)\n')
-            else:
-                # Get specific permissions - be flexible if they don't exist yet
-                permissions = Permission.objects.filter(codename__in=config['permissions'])
-                group.permissions.set(permissions)
-                
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f'✓ {role_name}: {config["description"]}'
-                    )
-                )
-                self.stdout.write(f'  → {permissions.count()} permissions assigned:')
-                for perm in permissions:
-                    self.stdout.write(f'    • {perm.codename} ({perm.content_type})')
-                
-                # Warn about missing permissions
-                missing = set(config['permissions']) - set(permissions.values_list('codename', flat=True))
-                if missing:
-                    self.stdout.write(
-                        self.style.WARNING(f'  ⚠ Missing permissions (create models first): {", ".join(missing)}')
-                    )
-                self.stdout.write('')
-
-        self.stdout.write(self.style.SUCCESS('✅ Role setup complete!\n'))
-        
-        # Show current state
-        self.stdout.write(self.style.WARNING('Current Groups and Permissions:'))
-        for group in Group.objects.all():
-            self.stdout.write(f'\n📋 {group.name}:')
-            perms = group.permissions.all()
-            if perms.count() > 10:
-                self.stdout.write(f'  → {perms.count()} permissions (too many to list)')
-            else:
-                for perm in perms:
-                    self.stdout.write(f'  • {perm.codename}')
+            # Try as number first
+            try:
+                choice_num = int(choice)
+                if 1 <= choice_num <= len(users):
+                    user = list(users)[choice_num - 1]
+                else:
+                    self.stdout.write(self.style.ERROR(f'Invalid number. Choose 1-{len(users)}'))
+                    return
+            except ValueError:
+                # Try as username
+                try:
+                    user = User.objects.get(username=choice)
+                except User.DoesNotExist:
+                    self.stdout.write(self.style.ERROR(f'User "{choice}" not found!'))
+                    return
+            
+            # Show before status
+            self.stdout.write('')
+            self.stdout.write(self.style.WARNING(f'BEFORE - {user.username}:'))
+            self.stdout.write(f'  is_active:    {user.is_active}')
+            self.stdout.write(f'  is_staff:     {user.is_staff}')
+            self.stdout.write(f'  is_superuser: {user.is_superuser}')
+            self.stdout.write(f'  role:         {user.role}')
+            self.stdout.write(f'  groups:       {", ".join([g.name for g in user.groups.all()]) or "None"}')
+            
+            # Fix the user
+            user.is_active = True
+            user.is_staff = True
+            user.is_superuser = True
+            user.role = 'admin'
+            user.save()
+            
+            # Add to Admin group
+            admin_group, _ = Group.objects.get_or_create(name='Admin')
+            user.groups.clear()
+            user.groups.add(admin_group)
+            
+            # Show after status
+            self.stdout.write('')
+            self.stdout.write(self.style.SUCCESS(f'AFTER - {user.username}:'))
+            self.stdout.write(f'  is_active:    {user.is_active} ✓')
+            self.stdout.write(f'  is_staff:     {user.is_staff} ✓')
+            self.stdout.write(f'  is_superuser: {user.is_superuser} ✓')
+            self.stdout.write(f'  role:         {user.role}')
+            self.stdout.write(f'  groups:       {", ".join([g.name for g in user.groups.all()])}')
+            
+            self.stdout.write('')
+            self.stdout.write(self.style.SUCCESS('='*70))
+            self.stdout.write(self.style.SUCCESS('✓ FIXED! Now do this:'))
+            self.stdout.write(self.style.SUCCESS('  1. Log out from Django admin'))
+            self.stdout.write(self.style.SUCCESS('  2. Log back in'))
+            self.stdout.write(self.style.SUCCESS('  3. You should now see everything!'))
+            self.stdout.write(self.style.SUCCESS('='*70 + '\n'))
+            
+        except KeyboardInterrupt:
+            self.stdout.write('\n\nCancelled.')
+            return
