@@ -25,6 +25,6 @@ class ArticleAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        if request.user.groups.filter(name="Author").exists():
+        if request.user.role == ROLE_AUTHORS:
             return qs.filter(author=request.user)
         return qs
