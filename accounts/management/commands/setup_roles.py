@@ -17,27 +17,48 @@ class Command(BaseCommand):
         # Define roles and their permissions
         roles_config = {
             'Author': {
-                'description': 'Can create and edit their own articles',
+                'description': 'Can create and edit their own articles and events',
                 'permissions': [
                     # Article permissions
                     'view_article',
                     'add_article',
                     'change_article',
+                    # Event permissions
+                    'view_event',
+                    'add_event',
+                    'change_event',
+                    # Category and Tag permissions
+                    'view_category',
+                    'view_tag',
                     # User permissions (view only)
                     'view_user',
                 ]
             },
             'Editor': {
-                'description': 'Can manage all articles and content',
+                'description': 'Can manage all articles, events, and content',
                 'permissions': [
                     # Article permissions
                     'view_article',
                     'add_article',
                     'change_article',
                     'delete_article',
+                    # Event permissions
+                    'view_event',
+                    'add_event',
+                    'change_event',
+                    'delete_event',
+                    # Category and Tag permissions
+                    'view_category',
+                    'add_category',
+                    'change_category',
+                    'delete_category',
+                    'view_tag',
+                    'add_tag',
+                    'change_tag',
+                    'delete_tag',
                     # User permissions
                     'view_user',
-                    # Add other content types as needed
+                    'change_user',
                 ]
             },
             'Admin': {
